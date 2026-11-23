@@ -1,4 +1,6 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
+import { Capacitor } from '@capacitor/core';
+import { HomePage } from '../pages/HomePage';
 import { AuthLayout } from '../layouts/AuthLayout';
 import { DashboardLayout } from '../layouts/DashboardLayout';
 import { LoginPage } from '../pages/LoginPage';
@@ -48,7 +50,8 @@ export const AppRoutes = () => (
     </Route>
     <Route path="/admin" element={<Navigate to="/admin/login" replace />} />
 
-    <Route path="/" element={<Navigate to="/login" replace />} />
+    {/* Public website home on the web; the installed app opens straight to login */}
+    <Route path="/" element={Capacitor.isNativePlatform() ? <Navigate to="/login" replace /> : <HomePage />} />
     <Route path="*" element={<NotFoundPage />} />
   </Routes>
 );

@@ -47,3 +47,7 @@ SESSION_HANDOFF.md
 # Local test artifacts / release binaries (APKs are delivered separately, not committed)
 .playwright-mcp/
 release/
+
+# App binaries served at /downloads (copied onto the server, not committed)
+backend/downloads/*
+!backend/downloads/.gitkeep

@@ -149,6 +149,18 @@ Add that origin to `CORS_ORIGIN` in `backend/.env` (comma-separated list).
 
 ---
 
+## Public website & app download
+
+`/` is the public home page (services, driver sign-up, app download). Its **Download for Android** button
+fetches `/downloads/RajWorthman-latest.apk`, served by the backend from `backend/downloads/` (not committed).
+The version, file size and optional contact details are in `frontend/src/config/site.ts`
+(or `VITE_CONTACT_PHONE`, `VITE_CONTACT_EMAIL`, `VITE_CONTACT_ADDRESS`, `VITE_APK_URL`).
+
+## Deploying to a VPS
+
+See **[deploy/DEPLOY_VPS.md](deploy/DEPLOY_VPS.md)** for PostgreSQL setup (with the full schema in
+`deploy/schema.sql`), PM2, Nginx (`deploy/nginx-rajworthman.conf`), HTTPS and backups.
+
 ## Mobile apps (Android & iOS)
 
 The same React app is packaged as native apps with [Capacitor](https://capacitorjs.com)

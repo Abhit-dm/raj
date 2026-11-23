@@ -11,6 +11,8 @@ First client preview build. Formerly "TravelLine".
 - **Android and iOS apps** built from the same code as the website (Capacitor). Android APK: `RajWorthman-v0.0.1.apk`.
 - Local file storage for photos and documents (`POST /api/uploads`), used when Cloudinary is not configured.
 - Mobile support: notch / safe-area padding, camera permission for document photos.
+- **Public home page** (`/`) about RajWorthman's business and personal transport services, with driver sign-up and a **Download for Android** button served from the live server (`/downloads/RajWorthman-latest.apk`).
+- **VPS deployment kit** (`deploy/`): PostgreSQL setup commands, full schema SQL, Nginx config, PM2, HTTPS and backups.
 
 ### Fixed
 - Security: drivers could mark their own vehicle as verified; vehicle and registration fields are now whitelisted.
@@ -24,6 +26,7 @@ First client preview build. Formerly "TravelLine".
 - Top bar showed "Driver" instead of the driver's name after sign-up.
 - Backend and frontend builds failed on TypeScript errors.
 - The backend opened a separate database connection pool per controller.
+- Behind a reverse proxy, rate limits applied to all users at once; the real client IP is now used in production.
 
 ### Known limitations
 - The APK connects to a server on the office Wi-Fi (`192.168.0.112:3001`). It only works on that network until the backend is hosted online.

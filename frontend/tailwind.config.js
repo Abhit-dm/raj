@@ -8,6 +8,14 @@ export default {
   theme: {
     extend: {
       colors: {
+        // RajWorthman logo palette
+        brand: {
+          navy: '#13294B',
+          ink: '#0B1C3A',
+          orange: '#F7801A',
+          ember: '#E8480F',
+          sand: '#FFF4E8',
+        },
         gold: {
           50: '#FFF9E6',
           100: '#FFF0CE',

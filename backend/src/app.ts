@@ -15,6 +15,12 @@ import uploadRoutes from './routes/upload.routes';
 
 const app = express();
 
+// Behind Nginx in production: use the real client IP (X-Forwarded-For) so rate limits apply per visitor,
+// not to everyone at once as 127.0.0.1.
+if (config.nodeEnv === 'production' || process.env.TRUST_PROXY === 'true') {
+  app.set('trust proxy', 1);
+}
+
 app.use(helmet({
   crossOriginResourcePolicy: { policy: 'cross-origin' },
 }));
@@ -44,6 +50,16 @@ app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
+
+// Android app downloads for the public website (put the APK in backend/downloads/ on the server)
+app.use('/downloads', express.static(path.join(process.cwd(), 'downloads'), {
+  setHeaders: (res, filePath) => {
+    if (filePath.endsWith('.apk')) {
+      res.setHeader('Content-Type', 'application/vnd.android.package-archive');
+      res.setHeader('Content-Disposition', `attachment; filename="${path.basename(filePath)}"`);
+    }
+  },
+}));
 
 app.use('/api/auth', authRoutes);
 app.use('/api/drivers', driverRoutes);
