@@ -1,6 +1,8 @@
-# TravelLine Agency — Driver Partner Portal
+# RajWorthman — Driver Partner Portal
 
-A full-stack web application for managing TravelLine driver partner registrations, document verification, and admin approvals.
+*Drive | Manage | Grow* · Version 0.0.1 (Sprint 1) — see [CHANGELOG.md](CHANGELOG.md)
+
+A full-stack web application for managing RajWorthman driver partner registrations, document verification, and admin approvals.
 
 ---
 
@@ -125,6 +127,9 @@ VITE_CLOUDINARY_CLOUD_NAME=your_cloud_name
 VITE_CLOUDINARY_UPLOAD_PRESET=your_unsigned_preset
 ```
 
+Cloudinary is optional for local development: if `VITE_CLOUDINARY_CLOUD_NAME` / `VITE_CLOUDINARY_UPLOAD_PRESET`
+are not set, uploads are stored by the backend in `backend/uploads/` (via `POST /api/uploads`).
+
 To get these values:
 1. Log in to [cloudinary.com](https://cloudinary.com) → Settings → Upload
 2. Create an **unsigned** upload preset (call it e.g. `driver-registration`)
@@ -139,6 +144,48 @@ npm run dev
 
 App runs on **http://localhost:5173**
 
+To open it from a phone on the same Wi-Fi, run `npx vite --host` and browse to `http://<your-PC-IP>:5173`.
+Add that origin to `CORS_ORIGIN` in `backend/.env` (comma-separated list).
+
+---
+
+## Mobile apps (Android & iOS)
+
+The same React app is packaged as native apps with [Capacitor](https://capacitorjs.com)
+(`frontend/android`, `frontend/ios`, config in `frontend/capacitor.config.json`).
+
+Inside the app the API must be an absolute URL the phone can reach — set it in `frontend/.env.android`:
+
+```env
+VITE_API_URL=http://<your-PC-LAN-IP>:3001/api   # or your deployed API, e.g. https://api.example.com/api
+```
+
+and make sure `backend/.env` `CORS_ORIGIN` includes `http://localhost,capacitor://localhost` (the app origins on Android / iOS).
+
+### Android APK
+
+Requires JDK 21 and the Android SDK (platform 35, build-tools 35) — set `JAVA_HOME` and `ANDROID_HOME`, or
+`sdk.dir` in `frontend/android/local.properties`.
+
+```bash
+cd frontend
+npm run apk
+# -> android/app/build/outputs/apk/debug/app-debug.apk
+```
+
+Install it on a phone (enable "Install unknown apps"), or `adb install -r app-debug.apk`.
+The phone must be on the same network as the backend, and Windows Firewall must allow Node.js on port 3001.
+
+### iOS
+
+iOS builds need a Mac with Xcode:
+
+```bash
+cd frontend
+npm run build:ios
+npx cap open ios   # build & run from Xcode (a signing team is required for a real device)
+```
+
 ---
 
 ## Creating the first admin account
@@ -148,7 +195,7 @@ This is a one-time step. The `/api/admin/seed` endpoint creates an admin user us
 ```bash
 curl -X POST http://localhost:3001/api/admin/seed \
   -H "Content-Type: application/json" \
-  -d '{"email":"admin@travelline.com","password":"<your-password>","secret":"<your-ADMIN_SETUP_SECRET>"}'
+  -d '{"email":"admin@rajworthman.com","password":"<your-password>","secret":"<your-ADMIN_SETUP_SECRET>"}'
 ```
 
 After this, log in at **http://localhost:5173/admin/login** with those credentials.

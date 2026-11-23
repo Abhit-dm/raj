@@ -208,7 +208,6 @@ export const Step1PersonalDetails = () => {
   };
 
   const saveStep1Data = async (d: FormData) => {
-    try {
       await driverService.registerStep(1, {
         fullName: d.fullName,
         dateOfBirth: d.dateOfBirth,
@@ -219,20 +218,18 @@ export const Step1PersonalDetails = () => {
         profilePhotoUrl: photoUrl || undefined,
         address: { doorNumber: d.doorNumber, street: d.street, village: d.village, district: d.district, state: d.state, pinCode: d.pinCode },
       });
-    } catch { /* silently continue — data saved locally */ }
   };
 
   const onSubmit = async (d: FormData) => {
     setLoading(true);
-    if (accessToken) {
-      // Already registered — just update address/profile data
-      updateStep1(d);
-      await saveStep1Data(d);
-      setLoading(false);
-      setStep(2);
-      return;
-    }
     try {
+      if (accessToken) {
+        // Already registered — just update address/profile data
+        updateStep1(d);
+        await saveStep1Data(d);
+        setStep(2);
+        return;
+      }
       const res = await authService.register({ email: d.email, password: d.password, fullName: d.fullName, mobileNumber: d.mobileNumber });
       const { accessToken: token, refreshToken, user, driver } = res.data.data;
       setAccessToken(token);
@@ -245,12 +242,14 @@ export const Step1PersonalDetails = () => {
       toast.success('Step 1 Complete', 'Continue to driving details.');
     } catch (err: unknown) {
       const e = err as { response?: { status?: number; data?: { error?: string } } };
+      updateStep1(d); // keep what they typed
       if (e?.response?.status === 429) {
-        updateStep1(d);
-        setStep(2);
-        return;
+        toast.error('Too many attempts', 'Please wait a few minutes and try again.');
+      } else if (!e?.response) {
+        toast.error('Cannot reach server', 'Check your internet connection and try again.');
+      } else {
+        toast.error('Error', e.response.data?.error || 'Failed. Try again.');
       }
-      toast.error('Error', e?.response?.data?.error || 'Failed. Try again.');
     } finally { setLoading(false); }
   };
 

@@ -143,7 +143,7 @@ export const AdminDriverDetailPage = () => {
             <div style={{ width: '72px', height: '72px', borderRadius: '50%', background: 'linear-gradient(135deg,#F5C842,#C8900A)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '24px', fontWeight: 700, color: '#fff', flexShrink: 0, overflow: 'hidden' }}>
               {driver.profilePhotoUrl ? <img src={driver.profilePhotoUrl} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" /> : driver.fullName?.[0]?.toUpperCase()}
             </div>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '12px', flex: 1 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(160px,1fr))', gap: '12px', flex: 1 }}>
               <Row label="Full Name" value={driver.fullName} />
               <Row label="Email" value={driver.user?.email} />
               <Row label="Mobile" value={driver.mobileNumber} />
@@ -161,7 +161,7 @@ export const AdminDriverDetailPage = () => {
         {driver.address && (
           <Card>
             <SH icon={<MapPin style={{ width: '16px', height: '16px' }} />} title="Address" />
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '12px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(160px,1fr))', gap: '12px' }}>
               <Row label="Door No" value={driver.address.doorNumber} />
               <Row label="Street" value={driver.address.street} />
               <Row label="Village/City" value={driver.address.village} />
@@ -176,7 +176,7 @@ export const AdminDriverDetailPage = () => {
         {driver.drivingLicence && (
           <Card>
             <SH icon={<Car style={{ width: '16px', height: '16px' }} />} title="Driving Licence" />
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '12px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(160px,1fr))', gap: '12px' }}>
               <Row label="Licence No" value={driver.drivingLicence.licenceNumber} />
               <Row label="Class" value={driver.drivingLicence.licenceClass} />
               <Row label="Issuing Authority" value={driver.drivingLicence.issuingAuthority} />
@@ -191,7 +191,7 @@ export const AdminDriverDetailPage = () => {
         {driver.drivingExperience && (
           <Card>
             <SH icon={<Car style={{ width: '16px', height: '16px' }} />} title="Experience" />
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '12px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(160px,1fr))', gap: '12px' }}>
               <Row label="Total Years" value={String(driver.drivingExperience.totalYears)} />
               <Row label="Previous Company" value={driver.drivingExperience.previousCompany} />
               <Row label="Languages" value={driver.drivingExperience.languages?.join(', ')} />
@@ -204,7 +204,7 @@ export const AdminDriverDetailPage = () => {
         {driver.emergencyContact && (
           <Card>
             <SH icon={<Phone style={{ width: '16px', height: '16px' }} />} title="Emergency Contact" />
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '12px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(160px,1fr))', gap: '12px' }}>
               <Row label="Name" value={driver.emergencyContact.contactName} />
               <Row label="Number" value={driver.emergencyContact.contactNumber} />
               <Row label="Relationship" value={driver.emergencyContact.relationship} />
@@ -218,7 +218,7 @@ export const AdminDriverDetailPage = () => {
           {driver.documents.length === 0 ? (
             <p style={{ color: '#94a3b8', fontSize: '13px' }}>No documents uploaded</p>
           ) : (
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', gap: '10px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(140px,1fr))', gap: '10px' }}>
               {driver.documents.map(doc => (
                 <div key={doc.id} style={{ border: '1px solid #e2e8f0', borderRadius: '10px', padding: '12px 14px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                   <div>

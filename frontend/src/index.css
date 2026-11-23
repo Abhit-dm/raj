@@ -55,6 +55,9 @@
     @apply font-sans antialiased;
     background-color: #F8FAFC;
     color: #0F172A;
+    /* Keep content clear of the status bar / notch / home indicator in the mobile app */
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
   }
   .dark body {
     background-color: #0A0F1E;

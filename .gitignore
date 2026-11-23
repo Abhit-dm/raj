@@ -34,3 +34,16 @@ Thumbs.db
 
 # Prisma generated
 backend/src/generated/
+
+# Continuity
+SESSION_HANDOFF.md
+.continuity/*
+# Continuity decision memory — travels with the repo (runtime state stays ignored)
+!.continuity/decisions.jsonl
+!.continuity/.gitattributes
+!.continuity/SESSION_NOTES.md
+!.continuity/INSTRUCTIONS.md
+
+# Local test artifacts / release binaries (APKs are delivered separately, not committed)
+.playwright-mcp/
+release/

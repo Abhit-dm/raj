@@ -2,6 +2,11 @@ import imageCompression from 'browser-image-compression';
 
 const CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
 const UPLOAD_PRESET = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
+const API_BASE_URL: string = import.meta.env.VITE_API_URL || '/api';
+/* Without Cloudinary config, files are stored by our own backend instead */
+const USE_CLOUDINARY = Boolean(CLOUD_NAME && UPLOAD_PRESET);
+/* Origin of the backend when the API URL is absolute (mobile app), '' when proxied (web dev) */
+const API_ORIGIN = /^https?:\/\//.test(API_BASE_URL) ? new URL(API_BASE_URL).origin : '';
 
 /* Per-document compression settings */
 const COMPRESS_OPTIONS: Record<string, { maxSizeMB: number; maxWidthOrHeight: number; initialQuality: number }> = {
@@ -47,6 +52,8 @@ export async function uploadDocument(
     });
   }
 
+  if (!USE_CLOUDINARY) return uploadToBackend(fileToUpload, file.name, originalBytes);
+
   /* Upload to Cloudinary */
   const fd = new FormData();
   fd.append('file', fileToUpload);
@@ -69,6 +76,29 @@ export async function uploadDocument(
     url: data.secure_url,
     publicId: data.public_id,
     bytes: data.bytes,
+    originalBytes,
+  };
+}
+
+async function uploadToBackend(fileToUpload: File, originalName: string, originalBytes: number): Promise<CloudinaryResult> {
+  const fd = new FormData();
+  // Compressed images come back as image/jpeg; keep a matching extension so the server accepts them
+  const name = fileToUpload.type === 'image/jpeg' ? originalName.replace(/\.[^.]+$/, '') + '.jpg' : originalName;
+  fd.append('file', fileToUpload, name);
+
+  let res: Response;
+  try {
+    res = await fetch(`${API_BASE_URL}/uploads`, { method: 'POST', body: fd });
+  } catch {
+    throw new Error('Cannot reach server. Check your connection.');
+  }
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(body?.error || 'Upload failed');
+
+  return {
+    url: `${API_ORIGIN}${body.data.url}`,
+    publicId: body.data.url,
+    bytes: body.data.bytes,
     originalBytes,
   };
 }

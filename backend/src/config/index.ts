@@ -16,7 +16,8 @@ export const config = {
   jwtRefreshSecret,
   jwtExpiresIn: process.env.JWT_EXPIRES_IN || '15m',
   jwtRefreshExpiresIn: process.env.JWT_REFRESH_EXPIRES_IN || '7d',
-  corsOrigin: process.env.CORS_ORIGIN || 'http://localhost:5173',
+  corsOrigin: (process.env.CORS_ORIGIN || 'http://localhost:5173')
+    .split(',').map((o) => o.trim()).filter(Boolean),
   uploadDir: process.env.UPLOAD_DIR || './uploads',
   maxFileSize: parseInt(process.env.MAX_FILE_SIZE || '5242880'),
   smtp: {
@@ -24,6 +25,6 @@ export const config = {
     port: parseInt(process.env.SMTP_PORT || '587'),
     user: process.env.SMTP_USER || '',
     pass: process.env.SMTP_PASS || '',
-    from: process.env.FROM_EMAIL || 'noreply@travelline.com',
+    from: process.env.FROM_EMAIL || 'noreply@rajworthman.com',
   },
 };

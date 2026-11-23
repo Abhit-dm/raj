@@ -16,7 +16,7 @@ interface DocUpload {
   originalKB?: number;
 }
 
-const DOCS = [
+const DOCS: { key: string; label: string; required: boolean; capture?: 'user' | 'environment' }[] = [
   { key: 'AADHAAR_CARD',          label: 'Aadhaar Card',  required: true },
   { key: 'DRIVING_LICENCE_FRONT', label: 'DL Front',      required: true },
   { key: 'DRIVING_LICENCE_BACK',  label: 'DL Back',       required: true },
@@ -127,18 +127,24 @@ export const Step3DocumentsVehicle = () => {
     if (missing.length) { toast.error('Missing Documents', missing.map(d => d.label).join(', ')); return; }
     setSubmitting(true);
     try {
-      if (isWithVehicle && veh.registrationNumber) await vehicleService.create(veh);
+      if (isWithVehicle && veh.registrationNumber) {
+        // 409 = this vehicle was already saved on an earlier attempt; carry on with submission
+        await vehicleService.create(veh).catch((err) => { if (err?.response?.status !== 409) throw err; });
+      }
       const res = await driverService.submitRegistration();
       clearRegistration();
       navigate('/registration-success', { state: { registrationId: res.data.data.registrationId, submittedAt: res.data.data.submittedAt } });
     } catch (err: unknown) {
       const e = err as { response?: { status?: number; data?: { error?: string } } };
-      if (e?.response?.status === 429 || e?.response?.status === 401) {
-        clearRegistration();
-        navigate('/registration-success', { state: {} });
-        return;
+      if (e?.response?.status === 401) {
+        toast.error('Session expired', 'Please log in again to submit your registration.');
+      } else if (e?.response?.status === 429) {
+        toast.error('Too many requests', 'Please wait a few minutes and try again.');
+      } else if (!e?.response) {
+        toast.error('Cannot reach server', 'Check your internet connection and try again.');
+      } else {
+        toast.error('Submission Failed', e.response.data?.error || 'Please try again');
       }
-      toast.error('Submission Failed', e?.response?.data?.error || 'Please try again');
     } finally { setSubmitting(false); }
   };
 

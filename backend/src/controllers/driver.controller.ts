@@ -1,7 +1,6 @@
 import { Request, Response } from 'express';
-import { PrismaClient } from '@prisma/client';
+import { prisma } from '../lib/prisma';
 
-const prisma = new PrismaClient();
 
 export class DriverController {
   getMe = async (req: Request, res: Response): Promise<void> => {
@@ -77,8 +76,8 @@ export class DriverController {
         if (address) {
           await prisma.driverAddress.upsert({
             where: { driverId },
-            create: { driverId, ...address },
-            update: { ...address },
+            create: { ...address, driverId },
+            update: { ...address, driverId },
           });
         }
       } else if (step === 2) {
@@ -86,21 +85,22 @@ export class DriverController {
         if (experience) {
           await prisma.drivingExperience.upsert({
             where: { driverId },
-            create: { driverId, ...experience },
-            update: { ...experience },
+            create: { ...experience, driverId },
+            update: { ...experience, driverId },
           });
         }
         if (licence) {
           await prisma.drivingLicence.upsert({
             where: { driverId },
             create: {
-              driverId,
               ...licence,
+              driverId,
               issueDate: new Date(licence.issueDate),
               expiryDate: new Date(licence.expiryDate),
             },
             update: {
               ...licence,
+              driverId,
               issueDate: new Date(licence.issueDate),
               expiryDate: new Date(licence.expiryDate),
             },
@@ -109,8 +109,8 @@ export class DriverController {
         if (emergencyContact) {
           await prisma.emergencyContact.upsert({
             where: { driverId },
-            create: { driverId, ...emergencyContact },
-            update: { ...emergencyContact },
+            create: { ...emergencyContact, driverId },
+            update: { ...emergencyContact, driverId },
           });
         }
       }

@@ -81,9 +81,12 @@ export const DashboardPage = () => {
   const stats = overview?.stats || { totalDocuments: 0, totalVehicles: 0, profileCompletion: 0 };
   const recentNotifs: Array<{ id: string; title: string; message: string; isRead: boolean }> = notifications?.slice(0, 4) || [];
 
+  const hasAddress = !!(driverData as any)?.address;
+  const hasLicence = !!(driverData as any)?.drivingLicence;
+
   const verificationItems = [
     { label: 'Personal Information', done: !!(driverData?.fullName && (driverData as any)?.dateOfBirth) },
-    { label: 'Driving Licence', done: false },
+    { label: 'Driving Licence', done: hasLicence },
     { label: 'Identity Documents', done: (stats.totalDocuments || 0) >= 3 },
     { label: 'Vehicle Documents', done: false },
   ];
@@ -172,8 +175,8 @@ export const DashboardPage = () => {
               <div className="grid grid-cols-2 gap-2">
                 {[
                   { label: 'Personal Info', done: !!driverData?.fullName },
-                  { label: 'Address', done: false },
-                  { label: 'Driving Licence', done: false },
+                  { label: 'Address', done: hasAddress },
+                  { label: 'Driving Licence', done: hasLicence },
                   { label: 'Profile Photo', done: !!(driverData as any)?.profilePhotoUrl },
                   { label: 'Documents', done: stats.totalDocuments >= 3 },
                   { label: 'Vehicle Info', done: stats.totalVehicles > 0 },

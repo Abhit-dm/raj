@@ -1,11 +1,11 @@
 import { Link, useLocation } from 'react-router-dom';
 import { LogIn } from 'lucide-react';
 import loginBg from '../assets/images/Login_Img.png';
-import logoImg from '../assets/icons/logo.png';
+import logoImg from '../assets/brand/logo-horizontal.png';
 
-const TravelLineLogo = () => (
+const BrandLogo = () => (
   logoImg
-    ? <img src={logoImg} alt="TravelLine" style={{ height: '36px', width: 'auto', objectFit: 'contain' }} />
+    ? <img src={logoImg} alt="RajWorthman" style={{ height: '48px', width: 'auto', objectFit: 'contain', background: 'rgba(255,255,255,0.88)', padding: '4px 10px', borderRadius: '12px', boxShadow: '0 2px 10px rgba(15,23,42,0.12)' }} />
     : (
       <div style={{ fontFamily: "'Poppins',sans-serif", fontWeight: 800, fontSize: '20px' }}>
         <span style={{ color: '#fff' }}>Travel</span><span style={{ color: '#D89400' }}>Line</span>
@@ -26,7 +26,7 @@ export const RegistrationSuccessPage = () => {
 
       {/* Nav */}
       <nav className="rs-nav">
-        <TravelLineLogo />
+        <BrandLogo />
       </nav>
 
       {/* Center card */}

@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Zap, ShieldCheck, Clock } from 'lucide-react';
@@ -6,7 +7,7 @@ import { Step1PersonalDetails } from './Step1PersonalDetails';
 import { Step2DrivingDetails } from './Step2DrivingDetails';
 import { Step3DocumentsVehicle } from './Step3DocumentsVehicle';
 import loginBg from '../../assets/images/Login_Img.png';
-import logoImg from '../../assets/icons/logo.png';
+import logoImg from '../../assets/brand/logo-horizontal.png';
 
 const STEPS = [
   { label: 'Personal Details' },
@@ -14,9 +15,9 @@ const STEPS = [
   { label: 'Documents & Vehicle' },
 ];
 
-const TravelLineLogo = () => (
+const BrandLogo = () => (
   logoImg
-    ? <img src={logoImg} alt="TravelLine" style={{ height: '44px', width: 'auto', objectFit: 'contain' }} />
+    ? <img src={logoImg} alt="RajWorthman" style={{ height: '52px', width: 'auto', objectFit: 'contain', background: 'rgba(255,255,255,0.88)', padding: '4px 10px', borderRadius: '12px', boxShadow: '0 2px 10px rgba(15,23,42,0.12)' }} />
     : (
       <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
         <svg width="38" height="24" viewBox="0 0 56 34" fill="none">
@@ -46,6 +47,13 @@ const FEATURES = [
 
 export const RegistrationWizard = () => {
   const { currentStep } = useRegistrationStore();
+  const formAreaRef = useRef<HTMLDivElement>(null);
+
+  // Each step should open at its first field, not where the previous step's Continue button was
+  useEffect(() => {
+    formAreaRef.current?.scrollTo({ top: 0 });
+    window.scrollTo({ top: 0 });
+  }, [currentStep]);
 
   return (
     <div className="reg-root">
@@ -58,7 +66,7 @@ export const RegistrationWizard = () => {
         <div className="reg-sidebar-inner">
           {/* Logo */}
           <div style={{ marginBottom: '28px' }}>
-            <TravelLineLogo />
+            <BrandLogo />
           </div>
 
           {/* Tagline */}
@@ -151,7 +159,7 @@ export const RegistrationWizard = () => {
         <div className="reg-topbar">
           {/* Mobile logo */}
           <div className="reg-mobile-logo">
-            <TravelLineLogo />
+            <BrandLogo />
           </div>
           <h1 className="reg-title">Driver Registration</h1>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginLeft: 'auto' }}>
@@ -161,7 +169,7 @@ export const RegistrationWizard = () => {
         </div>
 
         {/* Scrollable form area */}
-        <div className="reg-form-area">
+        <div className="reg-form-area" ref={formAreaRef}>
           <div className="reg-form-card">
             <AnimatePresence mode="wait">
               <motion.div

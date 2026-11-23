@@ -1,10 +1,9 @@
 import app from './app';
 import { config } from './config';
-import { PrismaClient } from '@prisma/client';
+import { prisma } from './lib/prisma';
 import fs from 'fs';
 import path from 'path';
 
-const prisma = new PrismaClient();
 
 async function main() {
   try {
@@ -21,7 +20,7 @@ async function main() {
   }
 
   app.listen(config.port, () => {
-    console.log(`TravelLine API running on port ${config.port}`);
+    console.log(`RajWorthman API running on port ${config.port}`);
     console.log(`Environment: ${config.nodeEnv}`);
   });
 }

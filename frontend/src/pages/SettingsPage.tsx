@@ -140,7 +140,7 @@ export const SettingsPage = () => {
           <h3 className="font-semibold text-navy-700">Privacy &amp; Security</h3>
         </div>
         <div className="space-y-3 text-sm text-slate-600">
-          <p>Your documents are stored securely and only accessible to authorized TravelLine staff.</p>
+          <p>Your documents are stored securely and only accessible to authorized RajWorthman staff.</p>
           <p>Sensitive information such as Aadhaar and licence numbers are masked in the interface.</p>
           <p>All data transmissions are encrypted using industry-standard TLS encryption.</p>
         </div>

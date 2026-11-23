@@ -25,13 +25,15 @@ api.interceptors.response.use(
   (response) => response,
   async (error) => {
     const original = error.config;
-    if (error.response?.status === 401 && !original._retry) {
+    // Only try a refresh when we actually have a refresh token (e.g. not during sign-up)
+    if (error.response?.status === 401 && !original._retry && localStorage.getItem('refreshToken')) {
       original._retry = true;
       try {
         const refreshToken = localStorage.getItem('refreshToken');
         const res = await axios.post(`${API_BASE_URL}/auth/refresh`, { refreshToken });
-        const { accessToken } = res.data.data;
+        const { accessToken, refreshToken: newRefreshToken } = res.data.data;
         localStorage.setItem('accessToken', accessToken);
+        if (newRefreshToken) localStorage.setItem('refreshToken', newRefreshToken);
         original.headers.Authorization = `Bearer ${accessToken}`;
         return api(original);
       } catch {

@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { Home, ArrowLeft } from 'lucide-react';
 import loginBg from '../assets/images/Login_Img.png';
-import logoImg from '../assets/icons/logo.png';
+import logoImg from '../assets/brand/logo-horizontal.png';
 
 export const NotFoundPage = () => (
   <div style={{ position: 'fixed', inset: 0, display: 'flex', flexDirection: 'column', fontFamily: "'Inter',sans-serif" }}>
@@ -9,7 +9,7 @@ export const NotFoundPage = () => (
     <div style={{ position: 'absolute', inset: 0, background: 'rgba(10,20,40,0.45)' }} />
 
     <nav style={{ position: 'relative', zIndex: 10, padding: '18px 32px' }}>
-      <img src={logoImg} alt="TravelLine" style={{ height: '36px' }} />
+      <img src={logoImg} alt="RajWorthman" style={{ height: '48px', width: 'auto', objectFit: 'contain', background: 'rgba(255,255,255,0.88)', padding: '4px 10px', borderRadius: '12px', boxShadow: '0 2px 10px rgba(15,23,42,0.12)' }} />
     </nav>
 
     <div style={{ position: 'relative', zIndex: 10, flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 20px 20px' }}>

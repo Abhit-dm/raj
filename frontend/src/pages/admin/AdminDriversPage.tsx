@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Search, Users, CheckCircle, Clock, XCircle, AlertCircle, LogOut, Shield, ChevronRight, RefreshCw } from 'lucide-react';
+import { Search, Users, CheckCircle, Clock, XCircle, AlertCircle, LogOut, ChevronRight, RefreshCw } from 'lucide-react';
+import emblemImg from '../../assets/brand/logo-emblem.png';
 import { adminService } from '../../services/adminApi';
 
 interface Driver {
@@ -59,10 +60,8 @@ export const AdminDriversPage = () => {
       {/* Top nav */}
       <nav style={{ background: '#fff', borderBottom: '1px solid #e2e8f0', padding: '0 32px', height: '60px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', position: 'sticky', top: 0, zIndex: 100 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: 'linear-gradient(135deg,#F5C842,#C8900A)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <Shield style={{ width: '16px', height: '16px', color: '#fff' }} />
-          </div>
-          <span style={{ fontFamily: "'Poppins',sans-serif", fontWeight: 700, fontSize: '16px', color: '#101828' }}>TravelLine <span style={{ color: '#C8900A' }}>Admin</span></span>
+          <img src={emblemImg} alt="RajWorthman" style={{ height: '36px', width: 'auto', objectFit: 'contain' }} />
+          <span style={{ fontFamily: "'Poppins',sans-serif", fontWeight: 700, fontSize: '16px', color: '#101828' }}>RajWorthman <span style={{ color: '#C8900A' }}>Admin</span></span>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
           <button onClick={load} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#64748B', display: 'flex', alignItems: 'center', gap: '5px', fontSize: '13px' }}>
@@ -77,7 +76,7 @@ export const AdminDriversPage = () => {
       <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '28px 24px' }}>
 
         {/* Stats */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5,1fr)', gap: '14px', marginBottom: '24px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(140px,1fr))', gap: '14px', marginBottom: '24px' }}>
           {statCards.map(s => (
             <div key={s.label} style={{ background: '#fff', borderRadius: '14px', padding: '18px 16px', boxShadow: '0 1px 4px rgba(0,0,0,0.06)', display: 'flex', alignItems: 'center', gap: '12px' }}>
               <div style={{ width: '38px', height: '38px', borderRadius: '10px', background: s.color + '18', display: 'flex', alignItems: 'center', justifyContent: 'center', color: s.color, flexShrink: 0 }}>{s.icon}</div>
@@ -119,7 +118,8 @@ export const AdminDriversPage = () => {
           ) : drivers.length === 0 ? (
             <div style={{ padding: '48px', textAlign: 'center', color: '#94a3b8' }}>No drivers found</div>
           ) : (
-            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+            <div style={{ overflowX: 'auto', WebkitOverflowScrolling: 'touch' }}>
+            <table style={{ width: '100%', minWidth: '720px', borderCollapse: 'collapse' }}>
               <thead>
                 <tr style={{ background: '#f8fafc' }}>
                   {['Driver', 'Registration ID', 'Mobile', 'State', 'Documents', 'Status', ''].map(h => (
@@ -165,6 +165,7 @@ export const AdminDriversPage = () => {
                 })}
               </tbody>
             </table>
+            </div>
           )}
 
           {/* Pagination */}

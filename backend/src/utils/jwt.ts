@@ -1,4 +1,5 @@
 import jwt from 'jsonwebtoken';
+import { randomUUID } from 'crypto';
 import { config } from '../config';
 
 export const generateAccessToken = (payload: { userId: string; email: string; role: string }) => {
@@ -6,7 +7,8 @@ export const generateAccessToken = (payload: { userId: string; email: string; ro
 };
 
 export const generateRefreshToken = (payload: { userId: string }) => {
-  return jwt.sign(payload, config.jwtRefreshSecret, { expiresIn: config.jwtRefreshExpiresIn } as jwt.SignOptions);
+  // jwtid makes every refresh token unique, even two issued in the same second (the DB column is unique).
+  return jwt.sign(payload, config.jwtRefreshSecret, { expiresIn: config.jwtRefreshExpiresIn, jwtid: randomUUID() } as jwt.SignOptions);
 };
 
 export const verifyAccessToken = (token: string) => {

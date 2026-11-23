@@ -8,7 +8,7 @@ import { useAuthStore } from '../store/authStore';
 import { authService } from '../services/api';
 import { useToast } from '../components/ui/Toast';
 import loginBg from '../assets/images/Login_Img.png';
-import logoImg from '../assets/icons/logo.png';
+import logoImg from '../assets/brand/logo-horizontal.png';
 
 const schema = z.object({
   email: z.string().min(1, 'Email or mobile number is required'),
@@ -17,9 +17,9 @@ const schema = z.object({
 });
 type FormData = z.infer<typeof schema>;
 
-const TravelLineLogo = () => (
+const BrandLogo = () => (
   logoImg
-    ? <img src={logoImg} alt="TravelLine" style={{ height: '48px', width: 'auto', objectFit: 'contain' }} />
+    ? <img src={logoImg} alt="RajWorthman" style={{ height: '56px', width: 'auto', objectFit: 'contain', background: 'rgba(255,255,255,0.88)', padding: '4px 10px', borderRadius: '12px', boxShadow: '0 2px 10px rgba(15,23,42,0.12)' }} />
     : (
       <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
         <svg width="40" height="26" viewBox="0 0 56 34" fill="none">
@@ -116,7 +116,7 @@ export const LoginPage = () => {
 
       {/* ── NAVBAR ── */}
       <nav className="login-nav">
-        <TravelLineLogo />
+        <BrandLogo />
 
         <button className="login-help-btn">
           <Headphones style={{ width: '15px', height: '15px', color: '#C8900A', flexShrink: 0 }} />

@@ -1,9 +1,8 @@
 import { Request, Response } from 'express';
-import { PrismaClient } from '@prisma/client';
+import { prisma } from '../lib/prisma';
 import bcrypt from 'bcryptjs';
 import { generateAccessToken, generateRefreshToken } from '../utils/jwt';
 
-const prisma = new PrismaClient();
 
 export class AdminController {
   /* ── Auth ── */
@@ -61,7 +60,7 @@ export class AdminController {
   getDriver = async (req: Request, res: Response): Promise<void> => {
     try {
       const driver = await prisma.driver.findUnique({
-        where: { id: req.params.id },
+        where: { id: String(req.params.id) },
         include: {
           address: true,
           drivingExperience: true,
@@ -87,7 +86,7 @@ export class AdminController {
       }
 
       const driver = await prisma.driver.update({
-        where: { id: req.params.id },
+        where: { id: String(req.params.id) },
         data: { verificationStatus: status },
       });
 

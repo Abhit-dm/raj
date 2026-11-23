@@ -5,6 +5,7 @@ import {
   Bell, HelpCircle, Settings, LogOut, ChevronLeft, ChevronRight
 } from 'lucide-react';
 import { useAuthStore } from '../../store/authStore';
+import emblemImg from '../../assets/brand/logo-emblem.png';
 import { authService } from '../../services/api';
 
 const navItems = [
@@ -38,12 +39,12 @@ export const Sidebar = ({ collapsed, onToggle }: SidebarProps) => {
     <aside className={cn('glass-sidebar fixed left-0 top-0 h-full z-40 flex flex-col transition-all duration-300', collapsed ? 'w-16' : 'w-64')}>
       {/* Logo */}
       <div className="flex items-center gap-3 px-4 py-5 border-b border-white/40">
-        <div className="w-9 h-9 rounded-xl btn-gold flex items-center justify-center shrink-0">
-          <span className="text-white font-bold text-sm">TL</span>
+        <div className="w-9 h-9 flex items-center justify-center shrink-0">
+          <img src={emblemImg} alt="RajWorthman" className="h-9 w-auto object-contain" />
         </div>
         {!collapsed && (
           <div>
-            <p className="font-bold text-navy-700 text-sm leading-none">TravelLine</p>
+            <p className="font-bold text-navy-700 text-sm leading-none">RajWorthman</p>
             <p className="text-xs text-slate-500 mt-0.5">Driver Portal</p>
           </div>
         )}

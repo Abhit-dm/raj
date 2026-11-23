@@ -1,0 +1,9 @@
+{
+  "appId": "com.rajworthman.driver",
+  "appName": "RajWorthman",
+  "webDir": "dist",
+  "server": {
+    "androidScheme": "http",
+    "cleartext": true
+  }
+}

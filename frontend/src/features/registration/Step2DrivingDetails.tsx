@@ -111,10 +111,11 @@ export const Step2DrivingDetails = () => {
       updateStep2(d);
       setStep(3);
       toast.success('Step 2 Complete', 'Continue to documents.');
-    } catch {
-      // Advance regardless — data is saved locally
+    } catch (err: unknown) {
+      // Keep the entered data, but don't move on until the server has it
       updateStep2(d);
-      setStep(3);
+      const e = err as { response?: { status?: number; data?: { error?: string } } };
+      toast.error('Could not save driving details', !e?.response ? 'Cannot reach server. Check your connection.' : e.response.data?.error || 'Please try again.');
     } finally { setLoading(false); }
   };
 

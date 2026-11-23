@@ -11,6 +11,7 @@ import vehicleRoutes from './routes/vehicle.routes';
 import dashboardRoutes from './routes/dashboard.routes';
 import notificationRoutes from './routes/notification.routes';
 import adminRoutes from './routes/admin.routes';
+import uploadRoutes from './routes/upload.routes';
 
 const app = express();
 
@@ -51,9 +52,10 @@ app.use('/api/vehicles', vehicleRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/uploads', uploadRoutes);
 
 app.get('/api/health', (_req, res) => {
-  res.json({ success: true, message: 'TravelLine API is running', timestamp: new Date().toISOString() });
+  res.json({ success: true, message: 'RajWorthman API is running', timestamp: new Date().toISOString() });
 });
 
 app.use((err: Error, _req: express.Request, res: express.Response, _next: express.NextFunction) => {

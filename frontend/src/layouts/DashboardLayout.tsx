@@ -29,7 +29,7 @@ export const DashboardLayout = () => {
         <Sidebar collapsed={collapsed} onToggle={() => setCollapsed((v) => !v)} />
       </div>
 
-      <div className={cn('md:hidden fixed left-0 top-0 h-full z-40 transition-transform duration-300', mobileOpen ? 'translate-x-0' : '-translate-x-full')}>
+      <div className={cn('md:hidden fixed left-0 top-0 h-full w-64 z-40 transition-transform duration-300', mobileOpen ? 'translate-x-0' : '-translate-x-full invisible')}>
         <Sidebar collapsed={false} onToggle={() => setMobileOpen(false)} />
       </div>
 

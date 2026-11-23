@@ -1,9 +1,8 @@
 import { Request, Response } from 'express';
 import bcrypt from 'bcryptjs';
-import { PrismaClient } from '@prisma/client';
+import { prisma } from '../lib/prisma';
 import { generateAccessToken, generateRefreshToken, verifyRefreshToken } from '../utils/jwt';
 
-const prisma = new PrismaClient();
 
 export class AuthController {
   register = async (req: Request, res: Response): Promise<void> => {
@@ -41,7 +40,7 @@ export class AuthController {
       await prisma.notification.create({
         data: {
           driverId: user.driver!.id,
-          title: 'Welcome to TravelLine!',
+          title: 'Welcome to RajWorthman!',
           message: 'Your account has been created. Complete your registration to get started.',
           type: 'REGISTRATION',
         },
@@ -60,7 +59,7 @@ export class AuthController {
           accessToken,
           refreshToken,
           user: { id: user.id, email: user.email, role: user.role },
-          driver: { id: user.driver!.id, registrationId: user.driver!.registrationId },
+          driver: { id: user.driver!.id, registrationId: user.driver!.registrationId, fullName: user.driver!.fullName },
         },
       });
     } catch (error) {
