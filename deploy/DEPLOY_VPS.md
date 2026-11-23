@@ -65,7 +65,7 @@ sudo ufw allow 8080/tcp               # 5432 stays closed
 **Option A (recommended): Prisma migrations**, run from the backend folder after step 3:
 
 ```bash
-cd /var/www/rajworthman/backend
+cd /var/www/client-demo/backend
 npx prisma migrate deploy
 ```
 
@@ -74,7 +74,7 @@ npx prisma migrate deploy
 ```bash
 psql "postgresql://rajworthman:CHANGE_ME_STRONG_DB_PASSWORD@localhost:5432/rajworthman_db" -f deploy/schema.sql
 # Tell Prisma the schema is already applied, so future `migrate deploy` runs don't recreate it:
-cd /var/www/rajworthman/backend && npx prisma migrate resolve --applied 20261120121138_init
+cd /var/www/client-demo/backend && npx prisma migrate resolve --applied 20261120121138_init
 ```
 
 ### 1.5 Daily backups
@@ -99,14 +99,14 @@ sudo npm install -g pm2
 
 ```bash
 sudo mkdir -p /var/www && sudo chown $USER /var/www
-git clone https://github.com/Abhit-dm/raj.git /var/www/rajworthman
-cd /var/www/rajworthman
+git clone https://github.com/Abhit-dm/raj.git /var/www/client-demo
+cd /var/www/client-demo
 ```
 
 ### 3.1 Backend
 
 ```bash
-cd /var/www/rajworthman/backend
+cd /var/www/client-demo/backend
 cp .env.example .env
 nano .env
 ```
@@ -129,7 +129,7 @@ npx prisma generate
 npx prisma migrate deploy        # creates the tables (section 1.4)
 npm run build
 mkdir -p uploads downloads
-pm2 start dist/server.js --name rajworthman-api
+pm2 start dist/server.js --name client-demo-api
 pm2 save && pm2 startup          # run the command it prints, so the API restarts on reboot
 curl http://localhost:3001/api/health
 ```
@@ -137,7 +137,7 @@ curl http://localhost:3001/api/health
 ### 3.2 Frontend (website)
 
 ```bash
-cd /var/www/rajworthman/frontend
+cd /var/www/client-demo/frontend
 echo "VITE_API_URL=/api" > .env
 npm ci
 npm run build                    # output: frontend/dist
@@ -149,7 +149,7 @@ The website downloads the app from `http://187.77.178.120:8080/downloads/RajWort
 Upload the APK from your PC:
 
 ```bash
-scp release/RajWorthman-v0.0.1.apk user@SERVER_IP:/var/www/rajworthman/backend/downloads/RajWorthman-latest.apk
+scp release/RajWorthman-v0.0.1.apk user@SERVER_IP:/var/www/client-demo/backend/downloads/RajWorthman-latest.apk
 ```
 
 > The APK in `release/` is already built for this server (`VITE_API_URL=http://187.77.178.120:8080/api` in
@@ -158,8 +158,8 @@ scp release/RajWorthman-v0.0.1.apk user@SERVER_IP:/var/www/rajworthman/backend/d
 ## 4. Nginx
 
 ```bash
-sudo cp /var/www/rajworthman/deploy/nginx-rajworthman.conf /etc/nginx/sites-available/rajworthman
-sudo ln -s /etc/nginx/sites-available/rajworthman /etc/nginx/sites-enabled/rajworthman
+sudo cp /var/www/client-demo/deploy/nginx-rajworthman.conf /etc/nginx/sites-available/client-demo
+sudo ln -s /etc/nginx/sites-available/client-demo /etc/nginx/sites-enabled/client-demo
 sudo nginx -t && sudo systemctl reload nginx      # nginx -t must say "ok" before reloading
 curl http://187.77.178.120:8080/api/health
 ```
@@ -170,11 +170,11 @@ Leave the existing `default` / HMS CareDesk sites in `sites-enabled` as they are
 
 When the full domain (e.g. `client-demo.example.com`) has a DNS **A record** for `187.77.178.120`:
 
-1. In `/etc/nginx/sites-available/rajworthman`, change `listen 8080;` to `listen 80;` (and `[::]:80`) and set
+1. In `/etc/nginx/sites-available/client-demo`, change `listen 8080;` to `listen 80;` (and `[::]:80`) and set
    `server_name client-demo.example.com;`. Nginx routes by name, so this doesn't clash with the other site.
 2. `sudo nginx -t && sudo systemctl reload nginx`
 3. `sudo apt install -y certbot python3-certbot-nginx && sudo certbot --nginx -d client-demo.example.com`
-4. Update `CORS_ORIGIN` in `backend/.env` to `https://client-demo.example.com,...`, then `pm2 restart rajworthman-api`.
+4. Update `CORS_ORIGIN` in `backend/.env` to `https://client-demo.example.com,...`, then `pm2 restart client-demo-api`.
 5. Set `VITE_API_URL=https://client-demo.example.com/api` in `frontend/.env.android`, run `npm run apk`, and upload the new APK.
 
 ## 5. Create the first admin (once)
@@ -188,8 +188,8 @@ curl -X POST http://187.77.178.120:8080/api/admin/seed \
 ## 6. Updating to a new version
 
 ```bash
-cd /var/www/rajworthman && git pull
-cd backend && npm ci && npx prisma migrate deploy && npm run build && pm2 restart rajworthman-api
+cd /var/www/client-demo && git pull
+cd backend && npm ci && npx prisma migrate deploy && npm run build && pm2 restart client-demo-api
 cd ../frontend && npm ci && npm run build
 # new APK: scp it to backend/downloads/RajWorthman-latest.apk
 ```
