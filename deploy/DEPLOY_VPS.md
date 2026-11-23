@@ -1,11 +1,20 @@
 # Deploying RajWorthman on a VPS
 
-Tested target: **Ubuntu 22.04 / 24.04**, run as a sudo user. Replace these placeholders everywhere:
+Tested target: **Ubuntu 22.04 / 24.04**, run as a sudo user.
 
-| Placeholder | Example |
+### This demo server
+
+| | |
 |---|---|
-| `your-domain.com` | `rajworthman.com` |
-| `CHANGE_ME_STRONG_DB_PASSWORD` | output of `openssl rand -base64 24` |
+| Server IP | `187.77.178.120` |
+| RajWorthman URL | **`http://187.77.178.120:8080`** (website + app download) |
+| API used by the app | `http://187.77.178.120:8080/api` |
+| Domain | `client-demo`: needs a full name (e.g. `client-demo.example.com`) with a DNS A record pointing to `187.77.178.120` before HTTPS can be enabled |
+
+> ⚠️ This server already hosts another site ("HMS CareDesk") on ports 80/443. RajWorthman runs on **port 8080**
+> so the two don't clash. **Do not remove or edit the other site's Nginx config.**
+
+Replace `CHANGE_ME_STRONG_DB_PASSWORD` everywhere with the output of `openssl rand -base64 24`.
 
 ---
 
@@ -46,7 +55,9 @@ PostgreSQL on Ubuntu listens only on `localhost` by default, which is what we wa
 
 ```bash
 sudo -u postgres psql -c "SHOW listen_addresses;"   # should be: localhost
-sudo ufw allow OpenSSH && sudo ufw allow 'Nginx Full' && sudo ufw enable   # 5432 stays closed
+sudo ufw status                       # if ufw is active, open the RajWorthman port:
+sudo ufw allow 8080/tcp               # 5432 stays closed
+# Also open TCP 8080 in your VPS provider's firewall / security group, if it has one.
 ```
 
 ### 1.4 Create the tables
@@ -109,7 +120,7 @@ JWT_REFRESH_SECRET="<a different openssl rand -hex 48>"
 ADMIN_SETUP_SECRET="<openssl rand -hex 24>"
 NODE_ENV="production"
 PORT=3001
-CORS_ORIGIN="https://your-domain.com,http://localhost,capacitor://localhost"
+CORS_ORIGIN="http://187.77.178.120:8080,http://localhost,capacitor://localhost"
 ```
 
 ```bash
@@ -134,37 +145,44 @@ npm run build                    # output: frontend/dist
 
 ### 3.3 Put the Android app on the server (the "Download App" button)
 
-The website downloads the app from `https://your-domain.com/downloads/RajWorthman-latest.apk`.
+The website downloads the app from `http://187.77.178.120:8080/downloads/RajWorthman-latest.apk`.
 Upload the APK from your PC:
 
 ```bash
 scp release/RajWorthman-v0.0.1.apk user@SERVER_IP:/var/www/rajworthman/backend/downloads/RajWorthman-latest.apk
 ```
 
-> The APK must be built for the live server. On your PC, set `frontend/.env.android` to
-> `VITE_API_URL=https://your-domain.com/api`, then run `npm run apk` in `frontend` before uploading.
+> The APK in `release/` is already built for this server (`VITE_API_URL=http://187.77.178.120:8080/api` in
+> `frontend/.env.android`). If the address changes, update that file and run `npm run apk` in `frontend`.
 
-## 4. Nginx and HTTPS
+## 4. Nginx
 
 ```bash
 sudo cp /var/www/rajworthman/deploy/nginx-rajworthman.conf /etc/nginx/sites-available/rajworthman
-sudo sed -i 's/your-domain.com/YOUR_REAL_DOMAIN/g' /etc/nginx/sites-available/rajworthman
-sudo ln -s /etc/nginx/sites-available/rajworthman /etc/nginx/sites-enabled/
-sudo rm -f /etc/nginx/sites-enabled/default
-sudo nginx -t && sudo systemctl reload nginx
-
-sudo apt install -y certbot python3-certbot-nginx
-sudo certbot --nginx -d your-domain.com -d www.your-domain.com
+sudo ln -s /etc/nginx/sites-available/rajworthman /etc/nginx/sites-enabled/rajworthman
+sudo nginx -t && sudo systemctl reload nginx      # nginx -t must say "ok" before reloading
+curl http://187.77.178.120:8080/api/health
 ```
 
-Point the domain's DNS **A record** to the server IP before running certbot.
+Leave the existing `default` / HMS CareDesk sites in `sites-enabled` as they are.
+
+### 4.1 Later: HTTPS on a real domain
+
+When the full domain (e.g. `client-demo.example.com`) has a DNS **A record** for `187.77.178.120`:
+
+1. In `/etc/nginx/sites-available/rajworthman`, change `listen 8080;` to `listen 80;` (and `[::]:80`) and set
+   `server_name client-demo.example.com;`. Nginx routes by name, so this doesn't clash with the other site.
+2. `sudo nginx -t && sudo systemctl reload nginx`
+3. `sudo apt install -y certbot python3-certbot-nginx && sudo certbot --nginx -d client-demo.example.com`
+4. Update `CORS_ORIGIN` in `backend/.env` to `https://client-demo.example.com,...`, then `pm2 restart rajworthman-api`.
+5. Set `VITE_API_URL=https://client-demo.example.com/api` in `frontend/.env.android`, run `npm run apk`, and upload the new APK.
 
 ## 5. Create the first admin (once)
 
 ```bash
-curl -X POST https://your-domain.com/api/admin/seed \
+curl -X POST http://187.77.178.120:8080/api/admin/seed \
   -H "Content-Type: application/json" \
-  -d '{"email":"admin@your-domain.com","password":"<strong password>","secret":"<ADMIN_SETUP_SECRET from .env>"}'
+  -d '{"email":"admin@rajworthman.com","password":"<strong password>","secret":"<ADMIN_SETUP_SECRET from .env>"}'
 ```
 
 ## 6. Updating to a new version

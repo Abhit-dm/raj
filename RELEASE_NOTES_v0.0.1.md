@@ -21,18 +21,18 @@ This is the first preview of the RajWorthman driver partner app. Drivers sign up
 ## How to try it
 
 **Android phone**
-1. Install `RajWorthman-v0.0.1.apk`. If asked, allow "Install unknown apps".
-2. Connect the phone to the **same Wi-Fi as the RajWorthman server PC**. This is required for this preview.
-3. Open **RajWorthman** and tap **Create a New Driver Account**.
+1. On the phone, open **http://187.77.178.120:8080** and tap **Download for Android**, or install the `RajWorthman-v0.0.1.apk` file you received.
+2. If asked, allow "Install unknown apps", then tap Install.
+3. Open **RajWorthman** and tap **Create a New Driver Account**. Mobile data or any Wi-Fi works.
 
-**Computer (any browser on the same Wi-Fi)**
-- Driver site: `http://192.168.0.112:5173`
-- Admin panel: `http://192.168.0.112:5173/admin/login` (admin login details are shared separately)
+**Computer (any browser)**
+- Website: `http://187.77.178.120:8080`
+- Admin panel: `http://187.77.178.120:8080/admin/login` (admin login details are shared separately)
 
 ## Please note
 
 This is a **preview for feedback**, not the final release:
-- The app only works on the same Wi-Fi as the server. Access from anywhere comes once the server is hosted online.
+- The demo runs on a temporary address (`187.77.178.120:8080`) without HTTPS. A proper web address with a secure connection comes next.
 - It is a test build, not yet on the Play Store or App Store.
 - Trip History, Earnings and Support are placeholders for upcoming sprints.
 

@@ -29,7 +29,7 @@ First client preview build. Formerly "TravelLine".
 - Behind a reverse proxy, rate limits applied to all users at once; the real client IP is now used in production.
 
 ### Known limitations
-- The APK connects to a server on the office Wi-Fi (`192.168.0.112:3001`). It only works on that network until the backend is hosted online.
+- The demo runs at `http://187.77.178.120:8080` (port 8080, because the VPS already hosts another site on 80/443) without HTTPS. HTTPS needs a full domain name (e.g. `client-demo.example.com`) pointing to the server.
 - The APK is a debug build, for testing only. It is not signed for Play Store release.
 - iOS builds need a Mac with Xcode.
 - Trip History, Earnings and Support pages are placeholders.
