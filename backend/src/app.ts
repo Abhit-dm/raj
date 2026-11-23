@@ -12,6 +12,7 @@ import dashboardRoutes from './routes/dashboard.routes';
 import notificationRoutes from './routes/notification.routes';
 import adminRoutes from './routes/admin.routes';
 import uploadRoutes from './routes/upload.routes';
+import fleetRoutes from './routes/fleet.routes';
 
 const app = express();
 
@@ -34,14 +35,14 @@ app.use(cors({
 
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 100,
+  max: 300, // the app polls a few screens; still blocks abuse
   message: { success: false, error: 'Too many requests, please try again later.' },
 });
 app.use('/api/', limiter);
 
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 10,
+  max: 40, // OTP sign-in makes 2-3 calls per attempt
   message: { success: false, error: 'Too many authentication attempts.' },
 });
 app.use('/api/auth/', authLimiter);
@@ -69,6 +70,7 @@ app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/uploads', uploadRoutes);
+app.use('/api/fleet', fleetRoutes);
 
 app.get('/api/health', (_req, res) => {
   res.json({ success: true, message: 'RajWorthman API is running', timestamp: new Date().toISOString() });

@@ -9,13 +9,17 @@ datasource db {
 
 model User {
   id           String    @id @default(cuid())
-  email        String    @unique
-  passwordHash String
-  role         String    @default("DRIVER")
+  email        String?   @unique
+  phone        String?   @unique
+  passwordHash String?
+  role         String    @default("DRIVER") // DRIVER | FLEET_OWNER | ADMIN
+  language     String    @default("en")
+  permissions  Json?
   isActive     Boolean   @default(true)
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
   driver       Driver?
+  fleetOwner   FleetOwner?
   refreshTokens RefreshToken[]
   auditLogs    AuditLog[]
 }
@@ -26,13 +30,21 @@ model Driver {
   user                    User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   registrationId          String    @unique @default(cuid())
   fullName                String
+  firstName               String?
+  lastName                String?
+  vehicleTypes            String[]
+  latitude                Float?
+  longitude               Float?
+  locationUpdatedAt       DateTime?
+  isAvailable             Boolean   @default(true)
+  createdByAdmin          Boolean   @default(false)
   profilePhotoUrl         String?
   dateOfBirth             DateTime?
   gender                  String?
   mobileNumber            String
   alternateMobile         String?
   registrationType        RegistrationType @default(DRIVER_ONLY)
-  verificationStatus      VerificationStatus @default(SUBMITTED)
+  verificationStatus      VerificationStatus @default(PROFILE_INCOMPLETE)
   profileCompletionPercent Int      @default(0)
   submittedAt             DateTime?
   createdAt               DateTime  @default(now())
@@ -46,6 +58,45 @@ model Driver {
   consents                DriverConsent[]
   permissions             DriverPermission?
   notifications           Notification[]
+}
+
+model FleetOwner {
+  id                 String             @id @default(cuid())
+  userId             String             @unique
+  user               User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  firstName          String
+  lastName           String
+  dateOfBirth        DateTime?
+  mobileNumber       String
+  companyName        String?
+  city               String?
+  latitude           Float?
+  longitude          Float?
+  verificationStatus VerificationStatus @default(PROFILE_INCOMPLETE)
+  rejectionReason    String?
+  submittedAt        DateTime?
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+  vehicles           FleetVehicle[]
+}
+
+model FleetVehicle {
+  id                 String         @id @default(cuid())
+  ownerId            String
+  owner              FleetOwner     @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  vehicleType        String
+  registrationNumber String         @unique
+  manufacturer       String
+  model              String
+  manufacturingYear  Int?
+  capacity           String?
+  photos             String[]
+  rcUrl              String?
+  verificationStatus DocumentStatus @default(PENDING)
+  createdAt          DateTime       @default(now())
+  updatedAt          DateTime       @updatedAt
+
+  @@index([ownerId])
 }
 
 model DriverAddress {
@@ -238,6 +289,7 @@ enum RegistrationType {
 }
 
 enum VerificationStatus {
+  PROFILE_INCOMPLETE
   SUBMITTED
   UNDER_REVIEW
   APPROVED
@@ -252,6 +304,7 @@ enum DocumentType {
   PROFILE_PHOTO
   ADDRESS_PROOF
   PAN_CARD
+  RC_BOOK
 }
 
 enum DocumentStatus {

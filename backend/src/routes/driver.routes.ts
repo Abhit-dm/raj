@@ -9,6 +9,8 @@ router.use(authenticate);
 router.get('/me', ctrl.getMe);
 router.put('/me', ctrl.updateMe);
 router.put('/registration/step/:step', ctrl.updateStep);
+router.put('/me/location', ctrl.updateLocation);
+router.put('/me/availability', ctrl.updateAvailability);
 router.post('/registration/submit', ctrl.submitRegistration);
 
 export default router;

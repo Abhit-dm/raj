@@ -122,35 +122,97 @@ export class DriverController {
     }
   };
 
-  submitRegistration = async (req: Request, res: Response): Promise<void> => {
+  /* Live location, used by fleet owners' "find drivers nearby" map */
+  updateLocation = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const lat = Number(req.body?.latitude), lng = Number(req.body?.longitude);
+      if (!Number.isFinite(lat) || !Number.isFinite(lng) || Math.abs(lat) > 90 || Math.abs(lng) > 180) {
+        res.status(400).json({ success: false, error: 'Invalid location' }); return;
+      }
+      const user = await prisma.user.findUnique({ where: { id: req.user!.userId }, include: { driver: true } });
+      if (!user?.driver) { res.status(404).json({ success: false, error: 'Driver not found' }); return; }
+      await prisma.driver.update({ where: { id: user.driver.id }, data: { latitude: lat, longitude: lng, locationUpdatedAt: new Date() } });
+      res.json({ success: true });
+    } catch {
+      res.status(500).json({ success: false, error: 'Location update failed' });
+    }
+  };
+
+  updateAvailability = async (req: Request, res: Response): Promise<void> => {
     try {
       const user = await prisma.user.findUnique({ where: { id: req.user!.userId }, include: { driver: true } });
       if (!user?.driver) { res.status(404).json({ success: false, error: 'Driver not found' }); return; }
+      const driver = await prisma.driver.update({ where: { id: user.driver.id }, data: { isAvailable: Boolean(req.body?.isAvailable) } });
+      res.json({ success: true, data: { isAvailable: driver.isAvailable } });
+    } catch {
+      res.status(500).json({ success: false, error: 'Update failed' });
+    }
+  };
+
+  submitRegistration = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const user = await prisma.user.findUnique({
+        where: { id: req.user!.userId },
+        include: { driver: { include: { address: true, drivingLicence: true, documents: true, vehicles: true } } },
+      });
+      if (!user?.driver) { res.status(404).json({ success: false, error: 'Driver not found' }); return; }
+      const d = user.driver;
+
+      const missing = missingForSubmission(d);
+      if (missing.length) {
+        res.status(400).json({ success: false, error: `Please complete: ${missing.join(', ')}`, data: { missing } }); return;
+      }
+      if (d.verificationStatus === 'APPROVED') { res.status(400).json({ success: false, error: 'Already approved' }); return; }
 
       const driver = await prisma.driver.update({
-        where: { id: user.driver.id },
-        data: { verificationStatus: 'SUBMITTED', submittedAt: new Date() },
+        where: { id: d.id },
+        data: { verificationStatus: 'SUBMITTED', submittedAt: new Date(), profileCompletionPercent: 100 },
       });
 
       await prisma.notification.create({
         data: {
           driverId: driver.id,
-          title: 'Registration Submitted',
-          message: 'Your registration has been submitted and is under review.',
+          title: 'Sent for verification',
+          message: 'Your profile and documents were sent to our team. We will notify you once they are checked.',
           type: 'REGISTRATION',
         },
       });
 
       res.json({
         success: true,
-        data: {
-          registrationId: driver.registrationId,
-          submittedAt: driver.submittedAt,
-          verificationStatus: driver.verificationStatus,
-        },
+        data: { registrationId: driver.registrationId, submittedAt: driver.submittedAt, verificationStatus: driver.verificationStatus },
       });
     } catch {
       res.status(500).json({ success: false, error: 'Submission failed' });
     }
   };
 }
+
+type DriverForChecks = {
+  registrationType: string;
+  address: unknown;
+  drivingLicence: unknown;
+  documents: { documentType: string; verificationStatus: string }[];
+  vehicles: unknown[];
+};
+
+export const requiredDocuments = (registrationType: string) => {
+  const docs = ['PROFILE_PHOTO', 'AADHAAR_CARD', 'DRIVING_LICENCE_FRONT', 'DRIVING_LICENCE_BACK'];
+  if (registrationType === 'DRIVER_WITH_VEHICLE') docs.push('RC_BOOK');
+  return docs;
+};
+
+/* What a driver still has to add before the profile can go to the admin team */
+export const missingForSubmission = (d: DriverForChecks) => {
+  const missing: string[] = [];
+  if (!d.address) missing.push('address');
+  if (!d.drivingLicence) missing.push('driving licence details');
+  for (const type of requiredDocuments(d.registrationType)) {
+    const doc = d.documents.find((x) => x.documentType === type);
+    if (!doc || doc.verificationStatus === 'RESUBMISSION_REQUIRED' || doc.verificationStatus === 'REJECTED') {
+      missing.push(type.toLowerCase().replace(/_/g, ' '));
+    }
+  }
+  if (d.registrationType === 'DRIVER_WITH_VEHICLE' && d.vehicles.length === 0) missing.push('vehicle details');
+  return missing;
+};

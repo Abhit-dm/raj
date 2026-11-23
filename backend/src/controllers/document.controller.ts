@@ -2,6 +2,8 @@ import { Request, Response } from 'express';
 import { prisma } from '../lib/prisma';
 import fs from 'fs';
 
+const DOC_TYPES = ['AADHAAR_CARD', 'DRIVING_LICENCE_FRONT', 'DRIVING_LICENCE_BACK', 'PROFILE_PHOTO', 'ADDRESS_PROOF', 'PAN_CARD', 'RC_BOOK'];
+
 
 export class DocumentController {
   upload = async (req: Request, res: Response): Promise<void> => {
@@ -68,6 +70,7 @@ export class DocumentController {
       if (!user?.driver) { res.status(404).json({ success: false, error: 'Driver not found' }); return; }
 
       const { documentType, fileUrl, fileName, mimeType, fileSize } = req.body;
+      if (!DOC_TYPES.includes(documentType)) { res.status(400).json({ success: false, error: 'Unknown document type' }); return; }
       if (!documentType || !fileUrl || !fileName) {
         res.status(400).json({ success: false, error: 'documentType, fileUrl and fileName are required' }); return;
       }
@@ -77,12 +80,15 @@ export class DocumentController {
       if (existing) {
         doc = await prisma.driverDocument.update({
           where: { id: existing.id },
-          data: { fileUrl, fileName, mimeType: mimeType || 'image/jpeg', fileSize: fileSize || 0, verificationStatus: 'PENDING' },
+          data: { fileUrl, fileName, mimeType: mimeType || 'image/jpeg', fileSize: fileSize || 0, verificationStatus: 'PENDING', rejectionReason: null },
         });
       } else {
         doc = await prisma.driverDocument.create({
           data: { driverId: user.driver.id, documentType: documentType as any, fileUrl, fileName, mimeType: mimeType || 'image/jpeg', fileSize: fileSize || 0 },
         });
+      }
+      if (documentType === 'PROFILE_PHOTO') {
+        await prisma.driver.update({ where: { id: user.driver.id }, data: { profilePhotoUrl: fileUrl } });
       }
       res.status(201).json({ success: true, data: doc });
     } catch {

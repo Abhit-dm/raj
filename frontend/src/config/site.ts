@@ -1,5 +1,5 @@
 // Public-site settings. Update these for each release / when contact details are confirmed.
-export const APP_VERSION = '0.0.1';
+export const APP_VERSION = '0.0.2';
 
 // Where the Android app is downloaded from on the live server.
 // Default: served by the backend (or Nginx) from the /downloads folder on the VPS.

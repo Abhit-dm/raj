@@ -1,50 +1,59 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import type { Driver, User } from '../types';
 
-interface AuthState {
-  user: User | null;
-  driver: Driver | null;
-  accessToken: string | null;
+export type Role = 'DRIVER' | 'FLEET_OWNER';
+
+export type SessionUser = {
+  id: string;
+  email: string | null;
+  phone: string | null;
+  role: Role;
+  language: string;
+};
+
+export type SessionProfile = {
+  id: string;
+  fullName: string;
+  firstName?: string | null;
+  lastName?: string | null;
+  registrationId?: string;
+  mobileNumber: string;
+  verificationStatus: string;
+  registrationType?: string;
+  vehicleTypes?: string[];
+};
+
+export type Session = { accessToken: string; refreshToken: string; user: SessionUser; profile: SessionProfile | null };
+
+type AuthState = {
+  user: SessionUser | null;
+  profile: SessionProfile | null;
   isAuthenticated: boolean;
-  isLoading: boolean;
-  setUser: (user: User | null) => void;
-  setDriver: (driver: Driver | null) => void;
-  setAccessToken: (token: string | null) => void;
-  setIsLoading: (loading: boolean) => void;
+  setSession: (s: Session) => void;
+  setProfile: (p: Partial<SessionProfile>) => void;
   logout: () => void;
-}
+};
+
+export const homePathFor = (role?: string) => (role === 'FLEET_OWNER' ? '/fleet' : '/driver');
 
 export const useAuthStore = create<AuthState>()(
   persist(
     (set) => ({
       user: null,
-      driver: null,
-      accessToken: null,
+      profile: null,
       isAuthenticated: false,
-      isLoading: false,
-      setUser: (user) => set({ user, isAuthenticated: !!user }),
-      setDriver: (driver) => set({ driver }),
-      setAccessToken: (token) => {
-        if (token) localStorage.setItem('accessToken', token);
-        else localStorage.removeItem('accessToken');
-        set({ accessToken: token });
+      setSession: ({ accessToken, refreshToken, user, profile }) => {
+        localStorage.setItem('accessToken', accessToken);
+        localStorage.setItem('refreshToken', refreshToken);
+        set({ user, profile, isAuthenticated: true });
       },
-      setIsLoading: (isLoading) => set({ isLoading }),
+      setProfile: (p) => set((s) => (s.profile ? { profile: { ...s.profile, ...p } } : s)),
       logout: () => {
         localStorage.removeItem('accessToken');
         localStorage.removeItem('refreshToken');
-        set({ user: null, driver: null, accessToken: null, isAuthenticated: false });
+        set({ user: null, profile: null, isAuthenticated: false });
       },
     }),
-    {
-      name: 'auth-storage',
-      partialize: (state) => ({
-        user: state.user,
-        driver: state.driver,
-        accessToken: state.accessToken,
-        isAuthenticated: state.isAuthenticated,
-      }),
-    }
-  )
+    { name: 'rw-session' },
+  ),
 );

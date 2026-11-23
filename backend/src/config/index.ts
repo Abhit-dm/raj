@@ -18,6 +18,11 @@ export const config = {
   jwtRefreshExpiresIn: process.env.JWT_REFRESH_EXPIRES_IN || '7d',
   corsOrigin: (process.env.CORS_ORIGIN || 'http://localhost:5173')
     .split(',').map((o) => o.trim()).filter(Boolean),
+  // No SMS provider yet: test mode accepts one fixed OTP for every number. Turn off before real launch.
+  otp: {
+    testMode: (process.env.OTP_TEST_MODE ?? 'true') === 'true',
+    testCode: process.env.OTP_TEST_CODE || '1234',
+  },
   uploadDir: process.env.UPLOAD_DIR || './uploads',
   maxFileSize: parseInt(process.env.MAX_FILE_SIZE || '5242880'),
   smtp: {

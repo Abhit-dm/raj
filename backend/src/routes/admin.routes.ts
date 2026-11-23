@@ -24,6 +24,11 @@ router.use(authenticate, requireAdmin);
 router.get('/stats', ctrl.getStats);
 router.get('/drivers', ctrl.getDrivers);
 router.get('/drivers/:id', ctrl.getDriver);
+router.post('/drivers', ctrl.createDriver);
 router.put('/drivers/:id/status', ctrl.updateStatus);
+router.put('/documents/:id', ctrl.reviewDocument);
+router.get('/fleet-owners', ctrl.getFleetOwners);
+router.get('/fleet-owners/:id', ctrl.getFleetOwner);
+router.put('/fleet-owners/:id/status', ctrl.updateFleetOwnerStatus);
 
 export default router;

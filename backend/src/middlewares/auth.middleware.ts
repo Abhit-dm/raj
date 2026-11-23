@@ -32,3 +32,11 @@ export const authenticate = (req: Request, res: Response, next: NextFunction): v
     res.status(401).json({ success: false, error: 'Invalid or expired token' });
   }
 };
+
+export const requireRole = (...roles: string[]) => (req: Request, res: Response, next: NextFunction): void => {
+  if (!req.user || !roles.includes(req.user.role)) {
+    res.status(403).json({ success: false, error: 'Not allowed for this account type' });
+    return;
+  }
+  next();
+};

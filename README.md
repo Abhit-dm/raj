@@ -246,87 +246,72 @@ After this, log in at **http://localhost:5173/admin/login** with those credentia
 
 | Route | Description |
 |---|---|
-| `/login` | Driver login |
-| `/register` | 3-step registration wizard |
-| `/registration-success` | Post-registration confirmation |
-| `/dashboard` | Driver dashboard |
-| `/profile` | Driver profile |
-| `/documents` | Document management |
-| `/vehicles` | Vehicle management |
-| `/notifications` | Notifications |
-| `/settings` | Account settings |
-| `/admin/login` | Admin login |
-| `/admin/drivers` | Admin — driver list with search & filter |
-| `/admin/drivers/:id` | Admin — driver detail + approve/reject |
+| `/` | Public website (the Android app opens straight to the app instead) |
+| `/login` | Mobile number + OTP login |
+| `/signup/:step` | Sign-up: role → language → permissions → phone/OTP → details → (drivers) work type |
+| `/driver` | Driver home: status, online switch, remaining-steps checklist |
+| `/driver/task/:task` | address · licence · experience · emergency · vehicle |
+| `/driver/documents` | Upload / re-upload documents (camera, gallery, files) |
+| `/driver/alerts`, `/driver/profile` | Notifications, profile + language |
+| `/fleet` | Fleet owner home: fleet list, send for verification |
+| `/fleet/vehicles/new` | Add a vehicle with photos |
+| `/fleet/drivers` | Drivers nearby on an OpenStreetMap map |
+| `/admin/login` | Admin login (email + password) |
+| `/admin/drivers?bucket=` | all · incomplete · completed · rc_pending · resubmission · approved · rejected |
+| `/admin/drivers/new` | Admin registers a driver |
+| `/admin/drivers/:id` | Driver detail, per-document accept / re-upload, accept / reject driver |
+| `/admin/fleet-owners[/:id]` | Fleet owners and their vehicles |
 
 ---
 
 ## API Reference
 
-### Auth
+### Auth (drivers and fleet owners)
 ```
-POST /api/auth/register
-POST /api/auth/login
+POST /api/auth/otp/send       # { phone } → { isRegistered, testMode }
+POST /api/auth/otp/verify     # { phone, otp } → session, or { isNewUser, signupToken }
+POST /api/auth/signup         # { signupToken, role, language, firstName, lastName, dateOfBirth, registrationType?, vehicleTypes? }
 POST /api/auth/refresh
 POST /api/auth/logout
 GET  /api/auth/me
-POST /api/auth/forgot-password
-POST /api/auth/reset-password
+PUT  /api/auth/me/language
 ```
+`OTP_TEST_MODE=true` (the default) accepts `OTP_TEST_CODE` (default `1234`) for every number. Set it to `false` once an SMS provider is connected.
 
-### Driver Registration
+### Driver
 ```
-PUT  /api/drivers/registration/step/1   # Personal details + address
-PUT  /api/drivers/registration/step/2   # Driving info
-PUT  /api/drivers/registration/step/3   # Vehicle details
-POST /api/drivers/registration/submit   # Final submit
 GET  /api/drivers/me
-PUT  /api/drivers/me
+PUT  /api/drivers/registration/step/1   # { address }
+PUT  /api/drivers/registration/step/2   # { licence?, experience?, emergencyContact? }
+PUT  /api/drivers/me/location           # { latitude, longitude }
+PUT  /api/drivers/me/availability       # { isAvailable }
+POST /api/drivers/registration/submit   # 400 with the missing items until everything required is done
+POST /api/documents/save-url            # { documentType, fileUrl, fileName }
+POST /api/vehicles · PUT /api/vehicles/:id
+GET  /api/notifications · PUT /api/notifications/read-all
 ```
 
-### Documents
+### Fleet owner
 ```
-POST   /api/documents/save-url   # Save a Cloudinary URL to the DB
-GET    /api/documents/me
-DELETE /api/documents/:id
-```
-
-### Vehicles
-```
-POST   /api/vehicles
-GET    /api/vehicles
-PUT    /api/vehicles/:id
-DELETE /api/vehicles/:id
-```
-
-### Dashboard & Notifications
-```
-GET /api/dashboard/overview
-GET /api/notifications
-PUT /api/notifications/:id/read
-PUT /api/notifications/read-all
+GET  /api/fleet/me · PUT /api/fleet/me · PUT /api/fleet/me/location
+POST /api/fleet/vehicles · DELETE /api/fleet/vehicles/:id
+POST /api/fleet/me/submit
+GET  /api/fleet/drivers/nearby?lat=&lng=&radiusKm=&vehicleType=
 ```
 
 ### Admin (requires admin JWT)
 ```
-POST /api/admin/seed               # One-time admin account creation
+POST /api/admin/seed                     # One-time admin account creation
 POST /api/admin/login
-GET  /api/admin/stats
-GET  /api/admin/drivers            # ?search=&status=&page=
+GET  /api/admin/stats                    # counts per bucket + fleet
+GET  /api/admin/drivers                  # ?bucket=&search=&page=
+POST /api/admin/drivers                  # register a driver
 GET  /api/admin/drivers/:id
-PUT  /api/admin/drivers/:id/status # { status, rejectionReason }
+PUT  /api/admin/drivers/:id/status       # { status, rejectionReason }
+PUT  /api/admin/documents/:id            # { status: VERIFIED | RESUBMISSION_REQUIRED, reason }
+GET  /api/admin/fleet-owners · GET /api/admin/fleet-owners/:id
+PUT  /api/admin/fleet-owners/:id/status
 ```
-
----
-
-## Registration Flow
-
-1. Driver visits `/register`
-2. **Step 1** — Full name, DOB, gender, mobile, address, registration type, profile photo (uploaded to Cloudinary immediately)
-3. **Step 2** — Driving licence details, experience, languages, categories, emergency contact
-4. **Step 3** — Document uploads (Aadhaar, Licence front/back, PAN, Address Proof), vehicle details if applicable
-5. **Success screen** — shows registration ID; driver proceeds to dashboard
-6. Admin reviews in `/admin/drivers` and approves or rejects
 
 ---
 

@@ -2,6 +2,30 @@
 
 All notable changes to RajWorthman are recorded here.
 
+## [0.0.2] — 2026-11-23 · Sprint 2
+
+The driver app is now a proper mobile app, and fleet owners can join.
+
+### Added
+- **Launch animation**: a RajWorthman truck drives the logo along a highway to the centre of the screen (tap to skip).
+- **Steering-wheel app icon** and deeper navy and orange colours across the app.
+- **Mobile app design**: phone-first screens with a bottom tab bar, large touch targets, bottom sheets and a highway-themed login.
+- **New sign-up**: Driver or Fleet Owner, then language, permissions, mobile number + OTP, then name and date of birth. Drivers also choose "driver" or "driver with vehicle" and the vehicles they can drive.
+- **11 languages**: English, Hindi, Telugu, Tamil, Kannada, Malayalam, Marathi, Bengali, Gujarati, Punjabi and Odia. The app switches as soon as one is chosen, and it is saved to the account.
+- **Mobile number + OTP login**. Test mode: the OTP is `1234` for every number (`OTP_TEST_MODE`) until an SMS provider is connected.
+- **Permissions screen** (Android): location, camera, files, gallery, phone and messages.
+- **Driver home checklist**: the remaining steps (address, licence, documents, vehicle, experience, emergency contact), then "Send for verification". Includes an online/offline switch.
+- **Re-upload requests**: the admin can accept or ask for any single document again with a reason. The driver sees it on the home screen and in alerts.
+- **Fleet owners**: sign-up, a fleet of vehicles with photos (and optional RC), sending for verification, and **Find drivers nearby** on a free OpenStreetMap map. Phone numbers are shown only for verified drivers.
+- **Admin panel**: a sidebar with live counts (all registered, profile incomplete, profile completed, waiting RC approval, asked to re-upload, approved, rejected), **Register a driver**, and fleet owner review.
+
+### Changed
+- Email + password sign-up for drivers was replaced by mobile number + OTP. The admin still logs in with email + password.
+- New drivers start as "Profile incomplete" and reach the admin queue only after sending their profile for verification.
+
+### Database
+- Two new migrations (`20261123115900_sprint2_enums`, `20261123120000_sprint2_phone_fleet`). They only add tables and columns, so no existing data is changed.
+
 ## [0.0.1] — 2026-11-23 · Sprint 1
 
 First client preview build. Formerly "TravelLine".

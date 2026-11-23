@@ -107,7 +107,7 @@ export const HomePage = () => {
               </p>
               <div className="mt-8 flex flex-col gap-3 sm:flex-row">
                 <a href="#download" className={orangeBtn}><Smartphone className="h-5 w-5" /> Get the App</a>
-                <Link to="/register" className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/30 bg-white/10 px-6 py-3 font-semibold text-white backdrop-blur hover:bg-white/20">
+                <Link to="/signup" className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/30 bg-white/10 px-6 py-3 font-semibold text-white backdrop-blur hover:bg-white/20">
                   Become a Driver Partner <ArrowRight className="h-4 w-4" />
                 </Link>
               </div>
@@ -208,7 +208,7 @@ export const HomePage = () => {
                 ))}
               </ul>
               <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-                <Link to="/register" className={orangeBtn}>Register as a Driver <ArrowRight className="h-4 w-4" /></Link>
+                <Link to="/signup" className={orangeBtn}>Register as a Driver <ArrowRight className="h-4 w-4" /></Link>
                 <Link to="/login" className="inline-flex items-center justify-center rounded-xl border border-brand-navy/20 px-6 py-3 font-semibold text-brand-navy hover:bg-slate-50">Driver Login</Link>
               </div>
             </div>
@@ -269,7 +269,7 @@ export const HomePage = () => {
             )}
             <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
               <a href="#download" className={orangeBtn}><Smartphone className="h-5 w-5" /> Get the App</a>
-              <Link to="/register" className="inline-flex items-center justify-center rounded-xl border border-brand-navy/20 px-6 py-3 font-semibold text-brand-navy hover:bg-slate-50">Join as a Driver</Link>
+              <Link to="/signup" className="inline-flex items-center justify-center rounded-xl border border-brand-navy/20 px-6 py-3 font-semibold text-brand-navy hover:bg-slate-50">Join as a Driver</Link>
             </div>
           </div>
         </section>
@@ -281,7 +281,7 @@ export const HomePage = () => {
           <img src={logoImg} alt="RajWorthman" className="h-9 w-auto" />
           <div className="flex flex-wrap justify-center gap-x-5 gap-y-2">
             <Link to="/login" className="hover:text-brand-ember">Driver Login</Link>
-            <Link to="/register" className="hover:text-brand-ember">Register</Link>
+            <Link to="/signup" className="hover:text-brand-ember">Register</Link>
             <Link to="/admin/login" className="hover:text-brand-ember">Admin</Link>
             <a href={APK_URL} download className="hover:text-brand-ember">Download App</a>
           </div>

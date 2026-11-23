@@ -10,40 +10,40 @@
     --foreground: 15 23 42;
     --card: 255 255 255;
     --card-foreground: 15 23 42;
-    --primary: 217 154 25;
+    --primary: 232 101 10;
     --primary-foreground: 255 255 255;
-    --secondary: 20 33 61;
+    --secondary: 10 26 51;
     --secondary-foreground: 255 255 255;
     --muted: 241 245 249;
     --muted-foreground: 100 116 139;
-    --accent: 255 240 206;
-    --accent-foreground: 169 105 8;
+    --accent: 255 227 204;
+    --accent-foreground: 194 81 10;
     --destructive: 239 68 68;
     --destructive-foreground: 255 255 255;
     --border: 226 232 240;
     --input: 226 232 240;
-    --ring: 217 154 25;
+    --ring: 232 101 10;
     --radius: 0.75rem;
   }
 
   .dark {
     --background: 10 15 30;
     --foreground: 241 245 249;
-    --card: 20 33 61;
+    --card: 10 26 51;
     --card-foreground: 241 245 249;
-    --primary: 217 154 25;
+    --primary: 232 101 10;
     --primary-foreground: 15 23 42;
     --secondary: 30 41 59;
     --secondary-foreground: 241 245 249;
     --muted: 30 41 59;
     --muted-foreground: 148 163 184;
-    --accent: 169 105 8;
-    --accent-foreground: 255 240 206;
+    --accent: 194 81 10;
+    --accent-foreground: 255 227 204;
     --destructive: 239 68 68;
     --destructive-foreground: 255 255 255;
     --border: 51 65 85;
     --input: 51 65 85;
-    --ring: 217 154 25;
+    --ring: 232 101 10;
   }
 }
 
@@ -51,10 +51,12 @@
   * {
     border-color: rgb(226 232 240);
   }
+  html { -webkit-tap-highlight-color: transparent; }
   body {
     @apply font-sans antialiased;
-    background-color: #F8FAFC;
-    color: #0F172A;
+    background-color: #F3F5F9;
+    color: #0A1A33;
+    overscroll-behavior-y: none;
     /* Keep content clear of the status bar / notch / home indicator in the mobile app */
     padding-top: env(safe-area-inset-top);
     padding-bottom: env(safe-area-inset-bottom);
@@ -98,16 +100,16 @@
   }
 
   .btn-gold {
-    background: linear-gradient(135deg, #D99A19 0%, #A96908 100%);
+    background: linear-gradient(135deg, #E8650A 0%, #C2410C 100%);
     color: white;
     border: none;
-    box-shadow: 0 4px 24px rgba(217, 154, 25, 0.25);
+    box-shadow: 0 4px 24px rgba(232, 101, 10, 0.25);
     transition: all 0.2s ease;
   }
 
   .btn-gold:hover {
-    background: linear-gradient(135deg, #E5A620 0%, #B87210 100%);
-    box-shadow: 0 6px 32px rgba(217, 154, 25, 0.35);
+    background: linear-gradient(135deg, #F07420 0%, #D04A0C 100%);
+    box-shadow: 0 6px 32px rgba(232, 101, 10, 0.35);
     transform: translateY(-1px);
   }
 
@@ -120,8 +122,8 @@
 
   .input-glass:focus {
     background: rgba(255, 255, 255, 0.85);
-    border-color: #D99A19;
-    box-shadow: 0 0 0 3px rgba(217, 154, 25, 0.12);
+    border-color: #E8650A;
+    box-shadow: 0 0 0 3px rgba(232, 101, 10, 0.12);
     outline: none;
   }
 
@@ -129,8 +131,20 @@
     background: linear-gradient(135deg, #EEF2FF 0%, #E0F2FE 50%, #F0FDF4 100%);
   }
 
+  /* ── Mobile app primitives ── */
+  .pressable { transition: transform .12s ease, opacity .12s ease; }
+  .pressable:active { transform: scale(.97); }
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+  .no-scrollbar { scrollbar-width: none; }
+  .safe-bottom { padding-bottom: max(env(safe-area-inset-bottom), 0px); }
+  .bg-highway { background: linear-gradient(180deg, #050E1F 0%, #0A1A33 55%, #13284D 100%); }
+  .lane-dashes {
+    background-image: linear-gradient(90deg, #F8D9B8 0 60px, transparent 60px 120px);
+    background-size: 120px 100%;
+  }
+
   .text-gradient-gold {
-    background: linear-gradient(135deg, #D99A19, #A96908);
+    background: linear-gradient(135deg, #E8650A, #C2410C);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
